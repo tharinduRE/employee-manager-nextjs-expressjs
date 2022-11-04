@@ -6,8 +6,10 @@ NextJs + ExpressJs Full Stack Web Application.
 ### Apps and Packages
 
 - `api`: a [Express.js](https://expressjs.com/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+- `web`: a [Next.js](https://nextjs.org/) app
+- `packages`
+  - `eslint-config-custom`: custom `eslint` config used throughout the monorepo
+  - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 ### Develop
 
@@ -15,7 +17,7 @@ Download dependencies
 ```shell
 npm install
 ```
-Create a `.env` file on the root and add `MongoDB Connection String/URL` as Environment Variable
+Create a `.env` file on the <b>root</b> and add `MongoDB Connection String/URL` as Environment Variable
 
 ```
 MONGODB_URL=mongodb+srv://...
