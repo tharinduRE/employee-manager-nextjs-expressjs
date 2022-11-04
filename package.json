@@ -11,6 +11,8 @@
     "dev": "turbo run dev --parallel",
     "dev:api":"turbo run dev --filter=api",
     "dev:web":"turbo run dev --filter=web",
+    "test": "turbo run test --filter=api",
+    "test:watch": "turbo run test --filter=api",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

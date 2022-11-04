@@ -63,6 +63,7 @@ function onError(error: any) {
 
 function onListening() {
   var addr = server.address() as AddressInfo;
+  console.log(`[env] : ${config.env}`);
   console.log(
     `⚡️[server]: Server is running at http://${addr.address}${port}`
   );

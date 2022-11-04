@@ -30,6 +30,4 @@ const config = {
     url: envVars.MONGODB_URL,
   },
 };
-console.log(`[env] : ${config.env}`);
-
 export default config;

@@ -12,7 +12,7 @@ describe("GET /employee", () => {
 
   it("should return 200 & valid response containing all the employees", async () => {
     const res = await request(app)
-      .get(`/api/v1/employee`)
+      .get(`/api/v1/employees`)
       .expect(httpStatus.OK);
 
     expect(res.body.results).not.toBeNull();
@@ -20,7 +20,7 @@ describe("GET /employee", () => {
 
   it("should return 200 & contains employee with matching id", async () => {
     const res = await request(app)
-      .get(`/api/v1/employee/1`)
+      .get(`/api/v1/employees/1`)
       .expect(httpStatus.OK);
 
       expect(res.body.id).toEqual('1')
