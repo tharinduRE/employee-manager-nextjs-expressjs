@@ -1,4 +1,5 @@
-export type Employee = {
+export interface Employee {
+  // mongo object id
   _id?:string;
   
   id?: string;

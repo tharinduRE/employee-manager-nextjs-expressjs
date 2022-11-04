@@ -23,8 +23,7 @@ describe("GET /employee", () => {
       .get(`/api/v1/employee/1`)
       .expect(httpStatus.OK);
 
-      const emp = res.body
-      expect(emp.id).toEqual('1')
+      expect(res.body.id).toEqual('1')
   }); 
 
   afterAll(()=>{

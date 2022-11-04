@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Box>
 
       <main>
-        <Box paddingY={10}>
+        <Box paddingBottom={10} paddingTop={5}>
           <Container>{children}</Container>
         </Box>
       </main>

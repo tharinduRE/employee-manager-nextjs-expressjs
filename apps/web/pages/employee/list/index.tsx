@@ -1,6 +1,7 @@
 import GridIcon from "@mui/icons-material/GridView";
 import TableIcon from "@mui/icons-material/TableRows";
 import {
+  Alert,
   Box,
   Button, IconButton
 } from "@mui/material";
@@ -16,6 +17,7 @@ export default function EmployeeListPage() {
   const { view } = router.query;
 
   const { data: data, error } = useSWR(`employees`, getEmployeeList);
+  if(error) return <Alert severity="error">Error Occured during fetching data</Alert>
   return (
     <div>
       <Box sx={{ display: "flex" }} marginBottom={4}>

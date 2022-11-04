@@ -11,9 +11,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mutate } from "swr";
+import { deleteOne } from "../../api";
 import { Employee } from "../../interfaces/employee";
+import { RootState } from "../../store";
 import ConfirmationDialog from "../confirmDialog";
 
 export function TableView({ data }: { data?: Employee[] }) {
@@ -39,6 +43,10 @@ export function TableView({ data }: { data?: Employee[] }) {
 
   const router = useRouter();
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const selectedEmployee = useSelector(
+    (state: RootState) => state.employee.selectedEmployee
+  );
 
   const onEdit = (row: any) => {
     dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
@@ -46,8 +54,26 @@ export function TableView({ data }: { data?: Employee[] }) {
   };
 
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const onDelete = (row: any) => {
+  const onDeleteButton = (row: any) => {
+    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
     setOpenConfirmDialog(true);
+  };
+
+  const onCloseConfirmationDialog = () => {
+    setOpenConfirmDialog(false);
+  };
+
+  const onDelete = async () => {
+    try {
+      await deleteOne(selectedEmployee?._id);
+      dispatch({ type: "EMPLOYEE_SELECTED", payload: null });
+      enqueueSnackbar(`Successfully Deleted Employee`, { variant: "success" });
+      mutate('employees')
+    } catch (error) {
+      enqueueSnackbar("Error Occured while deleteing", { variant: "error" });
+    }finally{
+      setOpenConfirmDialog(false);
+    }
   };
 
   if (!data) return <CircularProgress />;
@@ -72,7 +98,15 @@ export function TableView({ data }: { data?: Employee[] }) {
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <StyledTableCell>
-                <Image src={row?.photo || 'https://randomuser.me/api/portraits/lego/5.jpg'} width={64} height={64} alt={"photo"} />
+                <Image
+                  src={
+                    row?.photo ||
+                    "https://randomuser.me/api/portraits/lego/5.jpg"
+                  }
+                  width={64}
+                  height={64}
+                  alt={"photo"}
+                />
               </StyledTableCell>
               <StyledTableCell component="th" scope="row">
                 {row?.first_name}
@@ -88,7 +122,7 @@ export function TableView({ data }: { data?: Employee[] }) {
                 <IconButton
                   aria-label="delete"
                   color="error"
-                  onClick={() => onDelete(row)}
+                  onClick={() => onDeleteButton(row)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -99,9 +133,9 @@ export function TableView({ data }: { data?: Employee[] }) {
         <ConfirmationDialog
           open={openConfirmDialog}
           keepMounted={false}
-          onClose={() => setOpenConfirmDialog(false)}
+          onClose={onCloseConfirmationDialog}
           id="confirmDialog"
-          onAccept={() => {}}
+          onAccept={onDelete}
         >
           Confirm Delete ?{" "}
         </ConfirmationDialog>

@@ -5,57 +5,62 @@ import {
   Grid,
   MenuItem,
   Select,
-  TextField,
+  TextField
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useSnackbar } from "notistack";
 import * as yup from "yup";
 import { addOne, updateOne } from "../../api";
 import { Employee } from "../../interfaces/employee";
-import { useSnackbar } from 'notistack';
 
 export default function EmployeeForm({ employee }: { employee?: Employee }) {
-  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { handleSubmit, handleChange, values, touched, errors ,isSubmitting} = useFormik({
-    initialValues: {
-      first_name: "",
-      last_name: "",
-      number: "",
-      email: "",
-      gender: "M",
-      ...employee,
-    },
-    enableReinitialize: true,
-    validationSchema: yup.object({
-      first_name: yup
-        .string()
-        .required("First name required.")
-        .matches(/^[A-Za-z]+$/, "Must be only alphabets")
-        // .min(6, "Must be exactly 6 characters")
-        .max(10, "Must be less than 10 characters"),
-      last_name: yup
-        .string()
-        .required("Last name required.")
-        .matches(/^[A-Za-z]+$/, "Must be only alphabets")
-        .min(6, "Must be exactly 6 characters")
-        .max(10, "Must be less than 10 characters"),
-      number: yup
-        .string()
-        .required("Phone Number required.")
-        .matches(/^(?:7|0|(?:\+94))[0-9]{9,10}$/, "Must be a valid number"),
-      email: yup
-        .string()
-        .email("Enter a valid email")
-        .required("Email is required"),
-    }),
-    onSubmit: async(values) => {
-      const emp = (employee) ? await updateOne(values) :  await addOne(values)
-      dispatch({ type: "EMPLOYEE_SELECTED", payload: emp.data });
-      enqueueSnackbar(employee ?"Employee Updated." :  "Employee Saved.",{key : emp?.data?._id,variant:'success'})
-    },
-  });
+  const { handleSubmit, handleChange, values, touched, errors, isSubmitting } =
+    useFormik({
+      initialValues: {
+        first_name: "",
+        last_name: "",
+        number: "",
+        email: "",
+        gender: "M",
+        ...employee,
+      },
+      enableReinitialize: true,
+      validationSchema: yup.object({
+        first_name: yup
+          .string()
+          .required("First name required.")
+          .matches(/^[A-Za-z]+$/, "Must be only alphabets")
+          // .min(6, "Must be exactly 6 characters")
+          .max(10, "Must be less than 10 characters"),
+        last_name: yup
+          .string()
+          .required("Last name required.")
+          .matches(/^[A-Za-z]+$/, "Must be only alphabets")
+          .min(6, "Must be exactly 6 characters")
+          .max(10, "Must be less than 10 characters"),
+        number: yup
+          .string()
+          .required("Phone Number required.")
+          .matches(/^(?:7|0|(?:\+94))[0-9]{9,10}$/, "Must be a valid number"),
+        email: yup
+          .string()
+          .email("Enter a valid email")
+          .required("Email is required"),
+      }),
+      onSubmit: async (values) => {
+        try {
+          const emp = employee ? await updateOne(values) : await addOne(values);
+          enqueueSnackbar(employee ? "Employee Updated." : "Employee Saved.", {
+            key: emp?.data?._id,
+            variant: "success",
+          });
+        } catch (error) {
+          enqueueSnackbar("Error Occured", { variant: "error" });
+        }
+      },
+    });
 
   return (
     <Box
@@ -74,7 +79,7 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
             <Grid item xs={4}>
               <FormControl fullWidth>
                 <TextField
-                  id="filled-basic"
+                  id="first_name"
                   label=""
                   variant="filled"
                   name="first_name"
@@ -93,7 +98,7 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
             <Grid item xs={4}>
               <FormControl fullWidth>
                 <TextField
-                  id="filled-basic"
+                  id="last_name"
                   label=""
                   variant="filled"
                   name="last_name"
@@ -112,7 +117,7 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
             <Grid item xs={4}>
               <FormControl fullWidth>
                 <TextField
-                  id="filled-basic"
+                  id="email"
                   label=""
                   variant="filled"
                   name="email"
@@ -131,7 +136,7 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
             <Grid item xs={4}>
               <FormControl fullWidth>
                 <TextField
-                  id="filled-basic"
+                  id="number"
                   label=""
                   variant="filled"
                   name="number"
@@ -150,9 +155,8 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
             <Grid item xs={4}>
               <FormControl fullWidth>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="age"
+                  id="gender"
+                  name="gender"
                   onChange={handleChange}
                   value={values?.gender}
                   error={touched.gender && Boolean(errors.gender)}

@@ -1,9 +1,9 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSelector } from 'react-redux';
 import EmployeeForm from "../../../components/form";
-import { useSelector, useDispatch } from 'react-redux'
-import type { RootState } from '../../../store'
+import type { RootState } from '../../../store';
 
 export default function EmployeeEdit() {
   const router = useRouter();
@@ -11,8 +11,6 @@ export default function EmployeeEdit() {
 
   const selectedEmployee = useSelector((state: RootState) => state.employee.selectedEmployee)
   
-  const dispatch = useDispatch()
-
   return (
     <Box
       sx={{ display: "flex", flexDirection: "column", marginX: "auto" }}
