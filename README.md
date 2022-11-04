@@ -40,6 +40,18 @@ npm run dev:api
 npm run dev:web
 ```
 
+### Test
+
+To test all apps, run the following command:
+
+```
+npm run test
+```
+
+To run tests in watch mode
+```
+npm run test:watch
+```
 
 ### Build
 
