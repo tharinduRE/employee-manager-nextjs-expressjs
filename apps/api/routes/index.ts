@@ -15,7 +15,7 @@ interface IRoute {
  */
 const defaultIRoute: IRoute[] = [
   {
-    path: "/employee",
+    path: "/employees",
     route: empRoute,
   },
 ];

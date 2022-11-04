@@ -77,7 +77,7 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
               <StyledTableCell>{row?.last_name}</StyledTableCell>
               <StyledTableCell>{row?.email}</StyledTableCell>
               <StyledTableCell>{row?.number}</StyledTableCell>
-              <StyledTableCell align="center">{row?.gender}</StyledTableCell>
+              <StyledTableCell align="center">{{ M: "Male", F: "Female" }[row?.gender]}</StyledTableCell>
               <StyledTableCell align="center">
                 <Button startIcon={<Edit />} onClick={() => onEdit(row)}>
                   Edit
