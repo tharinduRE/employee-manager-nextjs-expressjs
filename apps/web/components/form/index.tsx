@@ -32,13 +32,13 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
           .string()
           .required("First name required.")
           .matches(/^[A-Za-z]+$/, "Must be only alphabets")
-          // .min(6, "Must be exactly 6 characters")
+          .min(6, "Must be minimum 6 characters")
           .max(10, "Must be less than 10 characters"),
         last_name: yup
           .string()
           .required("Last name required.")
           .matches(/^[A-Za-z]+$/, "Must be only alphabets")
-          .min(6, "Must be exactly 6 characters")
+          .min(6, "Must be minimum 6 characters")
           .max(10, "Must be less than 10 characters"),
         number: yup
           .string()
