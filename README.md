@@ -25,7 +25,18 @@ To develop all apps and packages, run the following command:
 ```
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to see the frontend
+- Open [http://localhost:3000](http://localhost:3000) to see the frontend
+- Open [http://localhost:8080](http://localhost:8080) to see the backend
+
+To Start frontend and backend indvidually, run following command
+
+```bash
+# to run backend
+npm run dev:api
+
+# to run frontend
+npm run dev:web
+```
 
 
 ### Build
