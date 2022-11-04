@@ -1,23 +1,23 @@
 import { Edit } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Button, Card, CardActions, CardContent, CardMedia, Grid, IconButton, Typography
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Fab,
+  Grid, Typography
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 import { Employee } from "../../interfaces/employee";
 
+type GridViewProps = {
+  data?: Employee[];
+  onEdit: (row: Employee) => void;
+  onDelete: (row: Employee) => void;
+};
 
-export default function GridView({ data }: { data?: Employee[] }) {
-  const router = useRouter();
-  const dispatch = useDispatch();
-
-  const onEdit = (row: any) => {
-    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
-    router.push(`/employee/edit/${row.id}`);
-  };
-
+export default function GridView({ data, onEdit, onDelete }: GridViewProps) {
   if (!data) return <CircularProgress />;
   return (
     <Grid
@@ -27,32 +27,46 @@ export default function GridView({ data }: { data?: Employee[] }) {
     >
       {data?.map((row, index) => (
         <Grid item xs={2} sm={4} md={4} key={index}>
-          <Card sx={{ maxWidth: 345 }}>
+          <Card sx={{ maxWidth: 345, position: "relative" }}>
             <CardMedia
               component="img"
-              height="140"
-              image={row?.photo || 'https://randomuser.me/api/portraits/lego/5.jpg'}
+              height="192"
+              image={
+                row?.photo || "https://randomuser.me/api/portraits/lego/5.jpg"
+              }
               alt="photo"
             />
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
+              <Typography gutterBottom variant="h6" component="div">
                 {row?.first_name} {row?.last_name}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {row?.email}
+              <Typography variant="subtitle2" color="text.secondary">
+                <b>{row?.email}</b>
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="subtitle2" color="text.secondary">
                 {row?.number}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {row?.gender}
+              <Typography variant="subtitle2" color="text.secondary">
+                {{ M: "Male", F: "Female" }[row?.gender]}
               </Typography>
             </CardContent>
-            <CardActions>
-              <Button startIcon={<Edit/>} onClick={() => onEdit(row)}>Edit</Button>
-              <IconButton aria-label="delete" color="error">
+            <CardActions sx={{ position: "absolute", bottom: 0, right: 0 }}>
+              <Fab
+                size="small"
+                color="primary"
+                onClick={() => onEdit(row)}
+                aria-label="add"
+              >
+                <Edit />
+              </Fab>
+              <Fab
+                size="small"
+                color="error"
+                onClick={() => onDelete(row)}
+                aria-label="add"
+              >
                 <DeleteIcon />
-              </IconButton>
+              </Fab>
             </CardActions>
           </Card>
         </Grid>

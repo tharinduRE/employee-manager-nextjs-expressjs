@@ -10,17 +10,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { mutate } from "swr";
-import { deleteOne } from "../../api";
 import { Employee } from "../../interfaces/employee";
-import { RootState } from "../../store";
-import ConfirmationDialog from "../confirmDialog";
 
-export function TableView({ data }: { data?: Employee[] }) {
+type TableViewProps = {
+  data?: Employee[];
+  onEdit: (row: Employee) => void;
+  onDelete: (row: Employee) => void;
+};
+
+export function TableView({ data, onDelete, onEdit }: TableViewProps) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.primary.light,
@@ -40,41 +38,6 @@ export function TableView({ data }: { data?: Employee[] }) {
       border: 0,
     },
   }));
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
-  const selectedEmployee = useSelector(
-    (state: RootState) => state.employee.selectedEmployee
-  );
-
-  const onEdit = (row: any) => {
-    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
-    router.push(`/employee/edit/${row._id}`);
-  };
-
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const onDeleteButton = (row: any) => {
-    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
-    setOpenConfirmDialog(true);
-  };
-
-  const onCloseConfirmationDialog = () => {
-    setOpenConfirmDialog(false);
-  };
-
-  const onDelete = async () => {
-    try {
-      await deleteOne(selectedEmployee?._id);
-      dispatch({ type: "EMPLOYEE_SELECTED", payload: null });
-      enqueueSnackbar(`Successfully Deleted Employee`, { variant: "success" });
-      mutate('employees')
-    } catch (error) {
-      enqueueSnackbar("Error Occured while deleteing", { variant: "error" });
-    }finally{
-      setOpenConfirmDialog(false);
-    }
-  };
 
   if (!data) return <CircularProgress />;
   return (
@@ -122,7 +85,7 @@ export function TableView({ data }: { data?: Employee[] }) {
                 <IconButton
                   aria-label="delete"
                   color="error"
-                  onClick={() => onDeleteButton(row)}
+                  onClick={() => onDelete(row)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -130,15 +93,6 @@ export function TableView({ data }: { data?: Employee[] }) {
             </StyledTableRow>
           ))}
         </TableBody>
-        <ConfirmationDialog
-          open={openConfirmDialog}
-          keepMounted={false}
-          onClose={onCloseConfirmationDialog}
-          id="confirmDialog"
-          onAccept={onDelete}
-        >
-          Confirm Delete ?{" "}
-        </ConfirmationDialog>
       </Table>
     </TableContainer>
   );
