@@ -1,32 +1,32 @@
+import { createReducer } from "@reduxjs/toolkit";
+import { EmployeeStore } from "../types";
+
+import { createAction } from "@reduxjs/toolkit";
 import { Employee } from "./../../interfaces/employee";
 
-const initialState: {
-  employeeList: Employee[];
-  selectedEmployee: Employee | undefined;
-} = {
+export const EMPLOYEE_SELECTED = createAction<Employee>("EMPLOYEE_SELECTED");
+export const EMPLOYEE_DELETED = createAction<string | undefined>("EMPLOYEE_DELETED");
+
+const initialState = {
   employeeList: [],
   selectedEmployee: undefined,
 };
 
-const empReducer = (state = initialState, action:any) => {
-  switch (action.type) {
-    case "EMPLOYEE_DELETE_SUCCEEDED":
-      const newEmployeeList = state.employeeList.filter(
+const empReducer = createReducer<EmployeeStore>(initialState, (builder) => {
+  builder
+    .addCase(EMPLOYEE_SELECTED, (state, action) => ({
+      ...state,
+      selectedEmployee: action.payload,
+    }))
+    .addCase(EMPLOYEE_DELETED, (state, action) => ({
+      ...state,
+      employeeList: state.employeeList.filter(
         (employee) => employee._id !== action.payload
-      );
-      return {
-        ...state,
-        employeeList: newEmployeeList,
-      };
-    case "EMPLOYEE_SELECTED":
-      const selectedEmployee = action.payload
-      return {
-        ...state,
-        selectedEmployee,
-      };
-    default:
-      return state;
-  }
-};
+      ),
+    }))
+    .addDefaultCase((state) => {
+      return state
+    });
+});
 
 export default empReducer;

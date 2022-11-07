@@ -6,7 +6,7 @@ import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { purple } from "@mui/material/colors";
-import { store } from "../store";
+import store from "../store";
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 

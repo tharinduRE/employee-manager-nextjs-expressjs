@@ -11,6 +11,6 @@ export const getEmployeeList = () => Axios.get<Employee[]>(employeeRoute)
 export const addOne = (emp:Employee) => Axios.post<Employee>(employeeRoute,emp)
 
 export const updateOne = (emp:Employee) => Axios.put<Employee>(`${employeeRoute}/${emp._id}`,emp)
-export const getEmployeeById = (empId:string | any) => Axios.get<Employee>(`${employeeRoute}/${empId}`)
-export const deleteOne = (empId:string) => Axios.delete(`${employeeRoute}/${empId}`)
+export const getEmployeeById = (empId?:string) => Axios.get<Employee>(`${employeeRoute}/${empId}`)
+export const deleteOne = (empId?:string) => Axios.delete(`${employeeRoute}/${empId}`)
 

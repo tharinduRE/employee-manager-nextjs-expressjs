@@ -14,7 +14,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
   if (typeof req.params["empId"] === "string") {
-    const employee = await Employee.findOne({ id: req.params["empId"] });
+    const employee = await Employee.findOne({ _id: req.params["empId"] });
     if (!employee) {
       throw new ApiError(httpStatus.NOT_FOUND, "employee not found");
     }
