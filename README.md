@@ -1,7 +1,12 @@
 # Employee Manager 
+![Next.js](https://img.shields.io/badge/Next-20232A?style=for-the-badge&logo=next.js)
+![Express.js](https://img.shields.io/badge/express-20232A?style=for-the-badge&logo=express)
+![Mongo](https://img.shields.io/badge/mongo-20232A?style=for-the-badge&logo=mongodb)
+![Redux](https://img.shields.io/badge/redux-20232A?style=for-the-badge&logo=redux)
+![Turborepo](https://img.shields.io/badge/turborepo-20232A?style=for-the-badge&logo=turborepo)
+![typescript](https://img.shields.io/badge/typescript-20232A?style=for-the-badge&logo=typescript)
 
-NextJs + ExpressJs Full Stack Web Application.
-
+Next.js + Express.js Full Stack Web Application.
 
 ### Apps and Packages
 
