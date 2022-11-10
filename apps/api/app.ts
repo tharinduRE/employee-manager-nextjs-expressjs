@@ -15,7 +15,7 @@ const app: Express = express();
 /**
  * CORS
  */
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: config.cors.origin }));
 app.options("*", cors());
 
 // set security HTTP headers

@@ -13,6 +13,7 @@ const envVarsSchema = Joi.object()
       .default("development"),
     PORT: Joi.number().default(8080),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
+    WEBAPP_URL:Joi.string().default("http://localhost:3000")
   })
   .unknown();
 
@@ -29,5 +30,8 @@ const config = {
   mongoose: {
     url: envVars.MONGODB_URL,
   },
+  cors: {
+    origin: envVars.WEBAPP_URL
+  }
 };
 export default config;
