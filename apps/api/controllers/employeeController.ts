@@ -41,6 +41,9 @@ export const deleteOne = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAll = asyncHandler
 (async (req: Request, res: Response) => {
-  const employees = await Employee.find();
+  const {order,orderBy} = req.query
+
+  const sortOrder = order == 'asc' ? 1 : -1
+  const employees = await Employee.find().sort({[String(orderBy)]:sortOrder});
   res.status(200).json(employees);
 });

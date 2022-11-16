@@ -1,16 +1,19 @@
 import { Edit } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, CircularProgress, IconButton } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, TableSortLabel } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell, { tableCellClasses, TableCellProps } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { visuallyHidden } from '@mui/utils';
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
 import { Employee } from "../../interfaces/employee";
+import { RootState } from "../../store";
 
 type TableViewProps = {
   data?: Employee[];
@@ -18,8 +21,52 @@ type TableViewProps = {
   onDelete: (row: Employee) => void;
 };
 
+interface HeadCell {
+  id: keyof Employee;
+  label: string;
+  numeric?: boolean;
+  nonSortable?:boolean;
+  align?: TableCellProps['align']
+}
+
+const headCells: readonly HeadCell[] = [
+  {
+    id: 'photo',
+    label: 'Photo',
+    nonSortable:true,
+  },
+  {
+    id: 'first_name',
+    label: 'First Name',
+  },
+  {
+    id: 'last_name',
+    label: 'Last Name',
+  },
+  {
+    id: 'email',
+    label: 'Email',
+  },
+  {
+    id: 'number',
+    label: 'Number',
+        nonSortable:true,
+  },
+  {
+    id: 'gender',
+    label: 'Gender',
+  },
+  {
+    id: 'id',
+    label: 'Actions',
+    nonSortable:true,
+    align:'center'
+  },
+];
+
+
 export function TableView({ data, onDelete, onEdit }: TableViewProps) {
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  const HeadTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.primary.light,
       color: theme.palette.common.white,
@@ -33,26 +80,54 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
     },
   }));
+
+  const {order,orderBy} = useSelector(
+    (state: RootState) => state.employee
+  );
+
+  const dispatch = useDispatch();
+
+  const handleRequestSort = (
+    property: keyof Employee,
+  ) => {
+    const isAsc = orderBy === property && order === 'asc';
+    dispatch({
+      type: "EMPLOYEE_ORDER",
+      payload: { order: isAsc ? "desc" : "asc", orderBy: property },
+    });
+  };
 
   if (!data) return <CircularProgress />;
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          <StyledTableRow>
-            <StyledTableCell>Image</StyledTableCell>
-            <StyledTableCell>First Name</StyledTableCell>
-            <StyledTableCell>Last Name</StyledTableCell>
-            <StyledTableCell>Email</StyledTableCell>
-            <StyledTableCell>Phone</StyledTableCell>
-            <StyledTableCell>Gender</StyledTableCell>
-            <StyledTableCell>Actions</StyledTableCell>
-          </StyledTableRow>
+        {headCells.map((headCell) => (
+          headCell.nonSortable ? 
+          <HeadTableCell>{headCell.label}</HeadTableCell> :
+          <HeadTableCell
+            key={headCell.id}
+            align={headCell.align ||  (headCell.numeric ? 'right' : 'left')}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={() => handleRequestSort(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </HeadTableCell>
+        ))}
         </TableHead>
         <TableBody>
           {data?.map((row, i) => (
@@ -60,7 +135,7 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
               key={i}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <StyledTableCell>
+              <TableCell>
                 <Image
                   src={
                     row?.photo ||
@@ -70,15 +145,15 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                   height={64}
                   alt={"photo"}
                 />
-              </StyledTableCell>
-              <StyledTableCell component="th" scope="row">
+              </TableCell>
+              <TableCell component="th" scope="row">
                 {row?.first_name}
-              </StyledTableCell>
-              <StyledTableCell>{row?.last_name}</StyledTableCell>
-              <StyledTableCell>{row?.email}</StyledTableCell>
-              <StyledTableCell>{row?.number}</StyledTableCell>
-              <StyledTableCell align="center">{{ M: "Male", F: "Female" }[row?.gender]}</StyledTableCell>
-              <StyledTableCell align="center">
+              </TableCell>
+              <TableCell>{row?.last_name}</TableCell>
+              <TableCell>{row?.email}</TableCell>
+              <TableCell>{row?.number}</TableCell>
+              <TableCell align="center">{{ M: "Male", F: "Female" }[row?.gender]}</TableCell>
+              <TableCell align="center">
                 <Button startIcon={<Edit />} onClick={() => onEdit(row)}>
                   Edit
                 </Button>
@@ -89,7 +164,7 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                 >
                   <DeleteIcon />
                 </IconButton>
-              </StyledTableCell>
+              </TableCell>
             </StyledTableRow>
           ))}
         </TableBody>

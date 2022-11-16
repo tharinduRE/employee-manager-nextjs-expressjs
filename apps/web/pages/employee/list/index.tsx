@@ -19,13 +19,14 @@ export default function EmployeeListPage() {
 
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const { data: data, error } = useSWR(`employees`, getEmployeeList, {
+  const {selectedEmployee,order,orderBy} = useSelector(
+    (state: RootState) => state.employee
+  );
+  
+  const { data: data, error } = useSWR(`employees-${orderBy}-${order}`, () => getEmployeeList(order,orderBy), {
     revalidateOnFocus: false,
   });
 
-  const selectedEmployee = useSelector(
-    (state: RootState) => state.employee.selectedEmployee
-  );
 
   const onEdit = (row: any) => {
     dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
