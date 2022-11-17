@@ -13,8 +13,8 @@ Next.js + Express.js Full Stack Web Application.
 
 ### Apps and Packages
 
-- `api`: a [Express.js](https://expressjs.com/) app
-- `web`: a [Next.js](https://nextjs.org/) app
+- `apps/api`: a [Express.js](https://expressjs.com/) app
+- `apps/web`: a [Next.js](https://nextjs.org/) app
 - `packages`
   - `eslint-config-custom`: custom `eslint` config used throughout the monorepo
   - `tsconfig`: `tsconfig.json`s used throughout the monorepo
