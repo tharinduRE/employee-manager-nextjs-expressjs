@@ -1,3 +1,4 @@
+import { Employee } from './../../../web/interfaces/employee';
 import httpStatus from "http-status";
 import { connect, Mongoose } from "mongoose";
 import request from "supertest";
@@ -10,20 +11,24 @@ describe("GET /employee", () => {
     connection = await connect(String(config.mongoose.url))
   })
 
+  let employee:Employee;
+
   it("should return 200 & valid response containing all the employees", async () => {
     const res = await request(app)
       .get(`/api/v1/employees`)
       .expect(httpStatus.OK);
 
-    expect(res.body.results).not.toBeNull();
+    employee = res.body[0]
+    expect(res.body).not.toBeNull()
+    expect(res.body.length).toBeGreaterThan(0);
   });
 
   it("should return 200 & contains employee with matching id", async () => {
     const res = await request(app)
-      .get(`/api/v1/employees/1`)
+      .get(`/api/v1/employees/${employee?._id}`)
       .expect(httpStatus.OK);
 
-      expect(res.body.id).toEqual('1')
+      expect(res.body._id).toEqual(employee?._id)
   }); 
 
   afterAll(()=>{
