@@ -11,9 +11,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { visuallyHidden } from '@mui/utils';
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
 import { Employee } from "../../interfaces/employee";
-import { RootState } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { EMPLOYEE_ORDER } from "../../store/reducers/employee";
 
 type TableViewProps = {
   data?: Employee[];
@@ -64,39 +64,36 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
+const HeadTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
 export function TableView({ data, onDelete, onEdit }: TableViewProps) {
-  const HeadTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.primary.light,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
 
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-    "&:last-child td, &:last-child th": {
-      border: 0,
-    },
-  }));
-
-  const {order,orderBy} = useSelector(
-    (state: RootState) => state.employee
-  );
-
-  const dispatch = useDispatch();
+  const {order,orderBy} = useAppSelector((state) => state.employee);
+  const dispatch = useAppDispatch();
 
   const handleRequestSort = (
     property: keyof Employee,
   ) => {
     const isAsc = orderBy === property && order === 'asc';
     dispatch({
-      type: "EMPLOYEE_ORDER",
+      type: EMPLOYEE_ORDER,
       payload: { order: isAsc ? "desc" : "asc", orderBy: property },
     });
   };

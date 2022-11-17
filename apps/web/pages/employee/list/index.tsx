@@ -5,37 +5,35 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import useSWR, { mutate } from "swr";
 import { deleteOne, getEmployeeList } from "../../../api";
 import ConfirmationDialog from "../../../components/confirmDialog";
 import GridView from "../../../components/gridView";
 import { TableView } from "../../../components/tableView";
-import { RootState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { EMPLOYEE_SELECTED } from "../../../store/reducers/employee";
 
 export default function EmployeeListPage() {
   const router = useRouter();
   const { view } = router.query;
-
-  const dispatch = useDispatch();
+  
+  const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const {selectedEmployee,order,orderBy} = useSelector(
-    (state: RootState) => state.employee
-  );
+  const {selectedEmployee,order,orderBy} = useAppSelector((state)=>state.employee)
   
   const { data: data, error } = useSWR(`employees-${orderBy}-${order}`, () => getEmployeeList(order,orderBy), {
     revalidateOnFocus: false,
   });
-
+  
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   const onEdit = (row: any) => {
-    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
+    dispatch({ type: EMPLOYEE_SELECTED, payload: row });
     router.push(`/employee/edit/${row._id}`);
   };
 
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const onDeleteButton = (row: any) => {
-    dispatch({ type: "EMPLOYEE_SELECTED", payload: row });
+    dispatch({ type: EMPLOYEE_SELECTED, payload: row });
     setOpenConfirmDialog(true);
   };
 
@@ -46,7 +44,7 @@ export default function EmployeeListPage() {
   const onDelete = async () => {
     try {
       await deleteOne(selectedEmployee?._id);
-      dispatch({ type: "EMPLOYEE_SELECTED", payload: null });
+      dispatch({ type: EMPLOYEE_SELECTED, payload: null });
       enqueueSnackbar(`Successfully Deleted Employee`, { variant: "success" });
       mutate("employees");
     } catch (error) {
