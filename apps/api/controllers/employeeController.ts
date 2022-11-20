@@ -47,5 +47,5 @@ export const getAll = asyncHandler
   const employees = await Employee.find()
     .sort({ [String(orderBy)]: sortOrder })
     .collation({ locale: "en_US" });
-  res.status(200).json(employees);
+  res.status(httpStatus.OK).json(employees);
 });

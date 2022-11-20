@@ -23,6 +23,8 @@ export default function EmployeeListPage() {
   
   const { data: data, error } = useSWR(`employees-${orderBy}-${order}`, () => getEmployeeList(order,orderBy), {
     revalidateOnFocus: false,
+    revalidateIfStale: false,
+    revalidateOnMount: true,
   });
   
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -32,21 +34,17 @@ export default function EmployeeListPage() {
     router.push(`/employee/edit/${row._id}`);
   };
 
-  const onDeleteButton = (row: any) => {
+  const onDelete = (row: any) => {
     dispatch({ type: EMPLOYEE_SELECTED, payload: row });
     setOpenConfirmDialog(true);
   };
 
-  const onCloseConfirmationDialog = () => {
-    setOpenConfirmDialog(false);
-  };
-
-  const onDelete = async () => {
+  const onDeleteConfirmation = async () => {
     try {
       await deleteOne(selectedEmployee?._id);
       dispatch({ type: EMPLOYEE_SELECTED, payload: null });
+      mutate(`employees-${orderBy}-${order}`)
       enqueueSnackbar(`Successfully Deleted Employee`, { variant: "success" });
-      mutate("employees");
     } catch (error) {
       enqueueSnackbar("Error Occured while deleteing", { variant: "error" });
     } finally {
@@ -78,20 +76,20 @@ export default function EmployeeListPage() {
         </Box>
       </Box>
       {view == "grid" ? (
-        <GridView data={data?.data} onEdit={onEdit} onDelete={onDeleteButton} />
+        <GridView data={data?.data} onEdit={onEdit} onDelete={onDelete} />
       ) : (
         <TableView
           data={data?.data}
           onEdit={onEdit}
-          onDelete={onDeleteButton}
+          onDelete={onDelete}
         />
       )}
       <ConfirmationDialog
         open={openConfirmDialog}
         keepMounted={false}
-        onClose={onCloseConfirmationDialog}
+        onClose={() => setOpenConfirmDialog(false)}
         id="confirmDialog"
-        onAccept={onDelete}
+        onAccept={onDeleteConfirmation}
       >
         Confirm Delete ?{" "}
       </ConfirmationDialog>

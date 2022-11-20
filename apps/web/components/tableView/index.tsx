@@ -103,9 +103,10 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
+          <TableRow>
         {headCells.map((headCell) => (
           headCell.nonSortable ? 
-          <HeadTableCell>{headCell.label}</HeadTableCell> :
+          <HeadTableCell key={headCell.id}>{headCell.label}</HeadTableCell> :
           <HeadTableCell
             key={headCell.id}
             align={headCell.align ||  (headCell.numeric ? 'right' : 'left')}
@@ -125,6 +126,7 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
             </TableSortLabel>
           </HeadTableCell>
         ))}
+          </TableRow>
         </TableHead>
         <TableBody>
           {data?.map((row, i) => (
