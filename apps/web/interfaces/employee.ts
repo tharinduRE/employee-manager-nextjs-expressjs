@@ -1,7 +1,7 @@
 export interface Employee {
   // mongo object id
-  _id?:string;
-  
+  _id?: string;
+
   id?: string;
   first_name: string;
   last_name: string;
@@ -9,4 +9,4 @@ export interface Employee {
   number: string;
   gender: string;
   photo?: string;
-};
+}
