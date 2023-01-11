@@ -1,4 +1,4 @@
-import { Pagination } from './../interfaces/pagination';
+import { PaginatedResults } from './../interfaces/pagination';
 import { Employee} from './../interfaces/employee';
 import { Request, Response } from "express";
 import httpStatus from "http-status";
@@ -7,6 +7,9 @@ import ApiError from "../errors/apiError";
 import EmployeeModel from "../models/employee.model";
 import asyncHandler from "../utils/asyncHandler";
 
+/**
+ *  Create 
+ */
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const employee = await new EmployeeModel(req.body).save();
   if(employee){
@@ -41,34 +44,39 @@ export const deleteOne = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+
+/**
+ * Get All
+ */
 export const getAll = asyncHandler(
-  async (req: Request, res: Response<Pagination<Employee>>) => {
+  async (req: Request, res: Response<PaginatedResults<Employee>>) => {
 
     const { order, orderBy, filters } = req.query;
     const sortOrder = order == "asc" ? 1 : -1;
-    let offset = Number(req.query.offset || 0)
-    let limit = Number(req.query.limit || 10)
+    let page = Number(req.query.page || 0)
+    let pageSize = Number(req.query.pageSize || 10)
 
     let filterQuery;
     if (filters) {
       filterQuery = JSON.parse(filters as string);
-      console.log(filters);
     }
+    // console.log(filterQuery);
     let query = EmployeeModel.find(filterQuery);
     
     const employees = await query
       .sort({ [String(orderBy)]: sortOrder })
-      .skip(offset)
-      .limit(limit)
-      .collation({ locale: "en_US" });
-    const count = await query.clone().countDocuments()
+      .skip(((page + 1) - 1) * pageSize)
+      .limit(pageSize)
+      .collation({ locale: "en_US",strength:2 });
+
+    const count = await EmployeeModel.countDocuments(filterQuery)
 
     res.status(httpStatus.OK).json({
       data: employees,
       pagination: {
         count,
-        limit,
-        offset,
+        page,
+        pageSize
       },
     });
   }

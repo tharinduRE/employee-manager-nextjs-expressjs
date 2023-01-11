@@ -1,6 +1,9 @@
 import { connect } from "mongoose";
 import config from ".";
 
+/**
+ *  Mongo DB Connection
+ */
 const mongodb = async () => {
   try {
     const mongoURI = config.mongoose.url;

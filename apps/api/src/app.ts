@@ -10,6 +10,9 @@ import router from "./routes";
 var path = require("path");
 var morgan = require("morgan");
 
+/**
+ *  Express App
+ */
 const app: Express = express();
 
 /**

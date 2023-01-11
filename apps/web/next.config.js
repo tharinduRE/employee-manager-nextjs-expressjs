@@ -6,14 +6,5 @@ module.exports = {
   images: {
     domains: ['randomuser.me'],
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/employee/list',
-        permanent: true,
-      },
-    ]
-  },
 
 };
