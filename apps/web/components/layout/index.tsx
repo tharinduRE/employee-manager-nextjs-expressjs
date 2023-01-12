@@ -22,11 +22,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </AppBar>
       </Box>
 
-      <main>
-        <Box paddingBottom={10} paddingTop={5}>
-          <Container>{children}</Container>
-        </Box>
-      </main>
+      <Box paddingBottom={10} paddingTop={5} component='main'>
+        <Container>{children}</Container>
+      </Box>
       {/* <Footer /> */}
     </>
   );

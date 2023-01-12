@@ -16,6 +16,7 @@ import store from "../store";
 
 import "../styles/global.css";
 import apptheme from "../config/theme";
+import ErrorBoundary from "../components/errorBoundry";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -47,6 +48,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <>
+    <ErrorBoundary>
       <Provider store={store}>
         <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
@@ -59,6 +61,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           </ThemeProvider>
         </ColorModeContext.Provider>
       </Provider>
+      </ErrorBoundary>
     </>
   );
 }

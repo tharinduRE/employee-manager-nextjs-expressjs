@@ -19,13 +19,14 @@ export default function EmployeeListPage() {
 
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const { selectedEmployee, order, orderBy, filters,pagination } = useAppSelector(
-    (state) => state.employee
-  );
+
+  const empState = useAppSelector((state) => state.employee);
+  const { selectedEmployee, ...rest } = empState;
+  const bulidFetcherKey = `employees-${JSON.stringify(rest)}`;
 
   const { data: data, error } = useSWR(
-    `employees-${orderBy}-${order}-${JSON.stringify(filters)}-${JSON.stringify(pagination)}`,
-    () => getEmployeeList({ order, orderBy, filters,pagination }),
+    bulidFetcherKey,
+    () => getEmployeeList({ ...rest }),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -49,7 +50,7 @@ export default function EmployeeListPage() {
     try {
       await deleteOne(selectedEmployee?._id);
       dispatch({ type: EMPLOYEE_SELECTED, payload: null });
-      mutate(`employees-${orderBy}-${order}`);
+      mutate(bulidFetcherKey);
       enqueueSnackbar(`Successfully Deleted Employee`, { variant: "success" });
     } catch (error) {
       enqueueSnackbar("Error Occured while deleteing", { variant: "error" });
@@ -81,15 +82,11 @@ export default function EmployeeListPage() {
           </IconButton>
         </Box>
       </Box>
-        {view == "grid" ? (
-          <GridView
-            data={data?.data.data}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ) : (
-          <TableView data={data?.data} onEdit={onEdit} onDelete={onDelete} />
-        )}
+      {view == "grid" ? (
+        <GridView data={data?.data.data} onEdit={onEdit} onDelete={onDelete} />
+      ) : (
+        <TableView data={data?.data} onEdit={onEdit} onDelete={onDelete} />
+      )}
       <ConfirmationDialog
         open={openConfirmDialog}
         keepMounted={false}

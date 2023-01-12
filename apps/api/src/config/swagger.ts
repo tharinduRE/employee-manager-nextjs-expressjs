@@ -1,5 +1,8 @@
 import config from ".";
 
+/**
+ *  Swagger Definition
+ */
 const swagger = {
     openapi: '3.0.0',
     info: {

@@ -1,13 +1,15 @@
-import { Edit } from "@mui/icons-material";
+import { Edit, FilterList, FilterListOff } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Alert,
   Box,
   Button,
-  IconButton, TableFooter,
+  IconButton,
+  Popover,
+  TableFooter,
   TablePagination,
   TableSortLabel,
-  TextField
+  TextField,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
@@ -15,7 +17,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, {
   tableCellClasses,
-  TableCellProps
+  TableCellProps,
 } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -27,8 +29,12 @@ import { useState } from "react";
 import { Employee } from "../../interfaces/employee";
 import { PaginatedResults } from "../../interfaces/pagination";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { EMPLOYEE_FILTER, EMPLOYEE_ORDER, EMPLOYEE_PAGINATION } from "../../store/reducers/employee";
-import { SpinnerUI } from "./SpinnerUI";
+import {
+  EMPLOYEE_FILTER,
+  EMPLOYEE_ORDER,
+  EMPLOYEE_PAGINATION,
+} from "../../store/reducers/employee";
+import { SpinnerUI } from "../spinnerUi";
 
 type TableViewProps = {
   data?: PaginatedResults<Employee>;
@@ -69,12 +75,12 @@ const headCells: readonly HeadCell[] = [
   {
     id: "number",
     label: "Number",
-    nonSortable: true,
     searchable: true,
   },
   {
     id: "gender",
     label: "Gender",
+    searchable: true,
   },
   {
     id: "id",
@@ -103,8 +109,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+/**
+ *  Helper function to retrive missing avatar images
+ * @param row employee
+ * @returns 
+ */
+export const getPhotoIfNotAvailable = (row: Employee) =>
+    `https://randomuser.me/api/portraits/${
+      { M: "men", F: "women" }[row?.gender]
+    }/${row.id}.jpg`;
+
 export function TableView({ data, onDelete, onEdit }: TableViewProps) {
-  const { order, orderBy, filters , pagination} = useAppSelector((state) => state.employee);
+  const { order, orderBy, filters } = useAppSelector((state) => state.employee);
   const dispatch = useAppDispatch();
 
   const handleRequestSort = (property: keyof Employee) => {
@@ -138,27 +154,17 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
   };
 
   const handleRowsPerPageChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     dispatch({
       type: EMPLOYEE_PAGINATION,
-      payload: { pageSize:event?.target.value },
+      payload: { pageSize: event?.target.value },
     });
   };
 
-
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const [anchorEls, setAnchorEl] = useState<{
+    [s: string]: HTMLButtonElement | null;
+  }>({});
 
   return (
     <TableContainer component={Paper}>
@@ -194,34 +200,51 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                   </TableSortLabel>
                   {headCell.searchable && (
                     <>
-                      {/* <IconButton aria-describedby={id} onClick={handleClick}>
-                        <FilterList />
+                      <IconButton
+                        onClick={(e) =>
+                          setAnchorEl((prev) => ({
+                            ...prev,
+                            [headCell.id]: e.currentTarget,
+                          }))
+                        }
+                      >
+                        {Boolean(anchorEls[headCell.id]) ||
+                        (filters[headCell.id] && filters[headCell.id] != "") ? (
+                          <FilterListOff />
+                        ) : (
+                          <FilterList />
+                        )}
                       </IconButton>
                       <Popover
                         id={headCell.id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
+                        open={Boolean(anchorEls[headCell.id])}
+                        anchorEl={anchorEls[headCell.id]}
+                        onClose={() =>
+                          setAnchorEl((prev) => ({
+                            ...prev,
+                            [headCell.id]: null,
+                          }))
+                        }
                         anchorOrigin={{
                           vertical: "bottom",
                           horizontal: "left",
                         }}
-                      > */}
-                      <Box sx={{ padding: 1 }}>
-                        <TextField
-                          id={headCell.id}
-                          size="small"
-                          variant="outlined"
-                          type="search"
-                          placeholder={`Search by ${headCell.label}`}
-                          // value={filters[headCell.id]}
-                          onChange={(e) => {
-                            e.preventDefault();
-                            handleSearchField(headCell.id, e.target.value);
-                          }}
-                        />
-                      </Box>
-                      {/* </Popover> */}
+                      >
+                        <Box sx={{ padding: 1 }}>
+                          <TextField
+                            id={headCell.id}
+                            size="small"
+                            variant="outlined"
+                            type="search"
+                            placeholder={`Search by ${headCell.label}`}
+                            defaultValue={filters[headCell.id]}
+                            onChange={(e) => {
+                              e.preventDefault();
+                              handleSearchField(headCell.id, e.target.value);
+                            }}
+                          />
+                        </Box>
+                      </Popover>
                     </>
                   )}
                 </HeadTableCell>
@@ -231,13 +254,17 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
         </TableHead>
         <TableBody>
           {!data ? (
-            <TableCell colSpan={7}>
-              <SpinnerUI />
-            </TableCell>
+            <TableRow>
+              <TableCell colSpan={7}>
+                <SpinnerUI />
+              </TableCell>
+            </TableRow>
           ) : data && data?.data?.length == 0 ? (
-            <TableCell colSpan={7}>
-              <Alert severity="info">No Results Found</Alert>
-            </TableCell>
+            <TableRow>
+              <TableCell colSpan={7}>
+                <Alert severity="info">No Results Found</Alert>
+              </TableCell>
+            </TableRow>
           ) : (
             data?.data?.map((row, i) => (
               <StyledTableRow
@@ -248,7 +275,7 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                   <Image
                     src={
                       row?.photo ||
-                      "https://randomuser.me/api/portraits/lego/5.jpg"
+                      getPhotoIfNotAvailable(row)
                     }
                     width={64}
                     height={64}
@@ -260,11 +287,13 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                 </TableCell>
                 <TableCell>{row?.last_name}</TableCell>
                 <TableCell>{row?.email}</TableCell>
-                <TableCell sx={{whiteSpace:'nowrap'}}>{row?.number}</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>
+                  {row?.number}
+                </TableCell>
                 <TableCell align="center">
                   {{ M: "Male", F: "Female" }[row?.gender]}
                 </TableCell>
-                <TableCell align="center" sx={{whiteSpace:'nowrap'}}>
+                <TableCell align="center" sx={{ whiteSpace: "nowrap" }}>
                   <Button startIcon={<Edit />} onClick={() => onEdit(row)}>
                     Edit
                   </Button>
@@ -288,6 +317,8 @@ export function TableView({ data, onDelete, onEdit }: TableViewProps) {
                 count={data?.pagination?.count}
                 rowsPerPage={data?.pagination?.pageSize}
                 page={data?.pagination?.page}
+                showFirstButton={true}
+                showLastButton={true}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleRowsPerPageChange}
               />

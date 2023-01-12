@@ -26,6 +26,9 @@ export const getOne = asyncHandler(async (req: Request, res: Response) => {
     res.send(employee);
   }
 });
+
+
+
 export const updateOne = asyncHandler(async (req: Request, res: Response) => {
   if (typeof req.params["empId"] === "string") {
     const employee = await EmployeeModel.findByIdAndUpdate(
@@ -35,6 +38,7 @@ export const updateOne = asyncHandler(async (req: Request, res: Response) => {
     res.send(employee);
   }
 });
+
 export const deleteOne = asyncHandler(async (req: Request, res: Response) => {
   if (typeof req.params["empId"] === "string") {
     await EmployeeModel.findOneAndDelete(

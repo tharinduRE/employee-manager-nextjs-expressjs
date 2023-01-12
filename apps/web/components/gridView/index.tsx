@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Employee } from "../../interfaces/employee";
-import { SpinnerUI } from "../tableView/SpinnerUI";
+import { SpinnerUI } from "../spinnerUi";
+import { getPhotoIfNotAvailable } from "../tableView";
 
 type GridViewProps = {
   data?: Employee[];
@@ -21,14 +22,14 @@ type GridViewProps = {
 };
 
 export default function GridView({ data, onEdit, onDelete }: GridViewProps) {
-  if (!data) return <CircularProgress />;
   return (
     <Grid
       container
       spacing={{ xs: 2, md: 3 }}
       columns={{ xs: 4, sm: 8, md: 12 }}
     >
-      {!data ? (
+      {
+      !data ? (
         <SpinnerUI />
       ) : data && data?.length == 0 ? (
         <Alert severity="info">No Results Found</Alert>
@@ -40,7 +41,7 @@ export default function GridView({ data, onEdit, onDelete }: GridViewProps) {
                 component="img"
                 height="192"
                 image={
-                  row?.photo || "https://randomuser.me/api/portraits/lego/5.jpg"
+                  row?.photo || getPhotoIfNotAvailable(row)
                 }
                 alt="photo"
               />
