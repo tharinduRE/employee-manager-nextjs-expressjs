@@ -1,4 +1,4 @@
-import { Employee } from './../../../web/interfaces/employee';
+import { Employee } from './../interfaces/employee';
 import httpStatus from "http-status";
 import { connect, Mongoose } from "mongoose";
 import request from "supertest";

@@ -1,6 +1,11 @@
 import { PaletteMode } from "@mui/material";
 import { deepPurple, purple } from "@mui/material/colors";
 
+/**
+ *  MUI Theme
+ * @param mode 
+ * @returns 
+ */
 const theme = (mode: PaletteMode) => ({
   palette: {
     mode,

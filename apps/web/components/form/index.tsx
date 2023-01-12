@@ -49,7 +49,7 @@ export default function EmployeeForm({ employee }: { employee?: Employee }) {
           .email("Enter a valid email")
           .required("Email is required"),
       }),
-      onSubmit: async (values) => {
+      onSubmit: async () => {
         try {
           const emp = employee ? await updateOne(values) : await addOne(values);
           enqueueSnackbar(employee ? "Employee Updated." : "Employee Saved.", {

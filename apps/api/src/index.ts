@@ -7,13 +7,13 @@ var debug = require("debug")("api:server");
 import http from "http";
 import { AddressInfo } from "net";
 import config from "./config";
-import connectMongoDB from "./config/mongodb";
+import mongodb from "./config/mongodb";
 import { normalizePort } from "./utils";
 
 /**
  * Connect to MongoDB
  */
-connectMongoDB();
+mongodb();
 /**
  * Get port from environment and store in Express.
  */

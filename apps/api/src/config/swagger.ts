@@ -1,6 +1,9 @@
 import config from ".";
 
-const swaggerDefinition = {
+/**
+ *  Swagger Definition
+ */
+const swagger = {
     openapi: '3.0.0',
     info: {
       title: 'Employee Manager API documentation',
@@ -18,4 +21,4 @@ const swaggerDefinition = {
     ],
   };
   
-export default swaggerDefinition;
+export default swagger;

@@ -6,4 +6,9 @@ export interface EmployeeStore {
   selectedEmployee: Employee | undefined;
   orderBy: keyof Employee
   order: Order
+  filters: any,
+  pagination:{
+    page: number,
+    pageSize: number
+  }
 }

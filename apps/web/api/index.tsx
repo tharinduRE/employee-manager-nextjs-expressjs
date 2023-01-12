@@ -1,14 +1,15 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-import { Employee } from "../interfaces/employee";
 import Axios from "axios";
-import { Order } from "../store/types";
+import { ApiFilter } from "../interfaces/apifilter";
+import { Employee } from "../interfaces/employee";
+import { PaginatedResults } from "../interfaces/pagination";
 
 Axios.defaults.baseURL =  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1';
 Axios.defaults.withCredentials = true;
 
 const employeeRoute = `/employees`;
-export const getEmployeeList = (order?: Order, orderBy?: keyof Employee) =>
-  Axios.get<Employee[]>(employeeRoute, { params: { order, orderBy } });
+export const getEmployeeList = (apiFilter:ApiFilter) =>
+  Axios.get<PaginatedResults<Employee>>(employeeRoute, { params: { order: apiFilter.order,orderBy: apiFilter.orderBy,...apiFilter.pagination, filters : JSON.stringify(apiFilter.filters)} });
 
 export const addOne = (emp:Employee) => Axios.post<Employee>(employeeRoute,emp)
 

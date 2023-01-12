@@ -11,6 +11,9 @@
 
 Next.js + Express.js Full Stack Web Application.
 
+### Architecture
+![architecture](./architecture.png)
+
 ### Apps and Packages
 
 - `apps/api`: a [Express.js](https://expressjs.com/) app

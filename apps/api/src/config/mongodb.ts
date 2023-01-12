@@ -1,7 +1,10 @@
 import { connect } from "mongoose";
 import config from ".";
 
-const connectMongoDB = async () => {
+/**
+ *  Mongo DB Connection
+ */
+const mongodb = async () => {
   try {
     const mongoURI = config.mongoose.url;
     await connect(mongoURI as string);
@@ -13,4 +16,4 @@ const connectMongoDB = async () => {
   }
 };
 
-export default connectMongoDB;
+export default mongodb;
